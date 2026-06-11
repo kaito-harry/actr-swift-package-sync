@@ -1,0 +1,55 @@
+name: WeChat Notify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  notify:
+    name: Notify WeChat Work
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: |
+      github.event_name == 'push' ||
+      (github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main')
+    steps:
+      - name: Send WeChat Work notification
+        env:
+          WECHAT_WEBHOOK_URL: ${{ secrets.WECHAT_WEBHOOK_URL }}
+          EVENT_NAME: ${{ github.event_name }}
+          REPO: ${{ github.repository }}
+          # PR-specific (only set on pull_request events)
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          # Push-specific (only set on push events)
+          COMMIT_SHA: ${{ github.event.head_commit.id }}
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+          COMMIT_AUTHOR: ${{ github.event.head_commit.author.username }}
+          COMMIT_AUTHOR_NAME: ${{ github.event.head_commit.author.name }}
+          COMMIT_URL: ${{ format('https://github.com/{0}/commit/{1}', github.repository, github.event.head_commit.id) }}
+          PUSHER: ${{ github.event.pusher.name }}
+        run: |
+          if [ "$EVENT_NAME" = "push" ]; then
+            SHORT_SHA="$(echo "$COMMIT_SHA" | cut -c1-7)"
+            # Fallback chain: GitHub username -> git author name -> pusher name -> "unknown"
+            COMMITTER="${COMMIT_AUTHOR:-${COMMIT_AUTHOR_NAME:-${PUSHER:-unknown}}}"
+            COMMIT_MSG_FIRST_LINE="$(echo "$COMMIT_MSG" | head -n 1)"
+            COMMIT_MSG_FIRST_LINE="${COMMIT_MSG_FIRST_LINE:-no message}"
+            CONTENT=$(printf '<font color="warning">New push to main branch</font>\n> Project: <font color="comment">%s</font>\n> Committer: <font color="comment">%s</font>\n> Commit: <font color="comment">[%s](%s)</font>\n> Message: <font color="comment">%s</font>' \
+              "$REPO" "$COMMITTER" "$SHORT_SHA" "$COMMIT_URL" "$COMMIT_MSG_FIRST_LINE")
+          else
+            CONTENT=$(printf '<font color="warning">New PR merged to main branch</font>\n> Project: <font color="comment">%s</font>\n> Issue Author: <font color="comment">%s</font>\n> Issue: <font color="comment">[#%s](%s)</font>\n> Title: <font color="comment">%s</font>\n> MR: <font color="comment">%s</font>' \
+              "$REPO" "$PR_AUTHOR" "$PR_NUMBER" "$PR_URL" "$PR_TITLE" "$PR_URL")
+          fi
+          jq -n --arg content "$CONTENT" '{msgtype: "markdown", markdown: {content: $content}}' > /tmp/payload.json
+          curl -sS --fail --connect-timeout 5 --max-time 10 -X POST "$WECHAT_WEBHOOK_URL" \
+            -H 'Content-Type: application/json' \
+            -d @/tmp/payload.json
