@@ -2180,6 +2180,59 @@ public func FfiConverterTypeBackpressureEventBridge_lower(_ value: BackpressureE
 
 
 /**
+ * Public payload for send preflight failures.
+ */
+public struct ConnectionNotReadyInfo: Equatable, Hashable {
+    public var retryAfterMs: UInt64?
+
+    // Default memberwise initializers are never public by default, so we
+    // declare one manually.
+    public init(retryAfterMs: UInt64?) {
+        self.retryAfterMs = retryAfterMs
+    }
+
+    
+
+    
+}
+
+#if compiler(>=6)
+extension ConnectionNotReadyInfo: Sendable {}
+#endif
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeConnectionNotReadyInfo: FfiConverterRustBuffer {
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> ConnectionNotReadyInfo {
+        return
+            try ConnectionNotReadyInfo(
+                retryAfterMs: FfiConverterOptionUInt64.read(from: &buf)
+        )
+    }
+
+    public static func write(_ value: ConnectionNotReadyInfo, into buf: inout [UInt8]) {
+        FfiConverterOptionUInt64.write(value.retryAfterMs, into: &buf)
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeConnectionNotReadyInfo_lift(_ buf: RustBuffer) throws -> ConnectionNotReadyInfo {
+    return try FfiConverterTypeConnectionNotReadyInfo.lift(buf)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeConnectionNotReadyInfo_lower(_ value: ConnectionNotReadyInfo) -> RustBuffer {
+    return FfiConverterTypeConnectionNotReadyInfo.lower(value)
+}
+
+
+/**
  * Credential renewal / warning event.
  */
 public struct CredentialEventBridge: Equatable, Hashable {
@@ -2972,6 +3025,8 @@ public enum ActrError: Swift.Error, Equatable, Hashable, Foundation.LocalizedErr
     
     case Unavailable(msg: String
     )
+    case ConnectionNotReady(info: ConnectionNotReadyInfo
+    )
     case TimedOut
     case NotFound(msg: String
     )
@@ -3030,33 +3085,36 @@ public struct FfiConverterTypeActrError: FfiConverterRustBuffer {
         case 1: return .Unavailable(
             msg: try FfiConverterString.read(from: &buf)
             )
-        case 2: return .TimedOut
-        case 3: return .NotFound(
+        case 2: return .ConnectionNotReady(
+            info: try FfiConverterTypeConnectionNotReadyInfo.read(from: &buf)
+            )
+        case 3: return .TimedOut
+        case 4: return .NotFound(
             msg: try FfiConverterString.read(from: &buf)
             )
-        case 4: return .PermissionDenied(
+        case 5: return .PermissionDenied(
             msg: try FfiConverterString.read(from: &buf)
             )
-        case 5: return .InvalidArgument(
+        case 6: return .InvalidArgument(
             msg: try FfiConverterString.read(from: &buf)
             )
-        case 6: return .UnknownRoute(
+        case 7: return .UnknownRoute(
             msg: try FfiConverterString.read(from: &buf)
             )
-        case 7: return .DependencyNotFound(
+        case 8: return .DependencyNotFound(
             serviceName: try FfiConverterString.read(from: &buf), 
             detail: try FfiConverterString.read(from: &buf)
             )
-        case 8: return .DecodeFailure(
+        case 9: return .DecodeFailure(
             msg: try FfiConverterString.read(from: &buf)
             )
-        case 9: return .NotImplemented(
+        case 10: return .NotImplemented(
             msg: try FfiConverterString.read(from: &buf)
             )
-        case 10: return .Internal(
+        case 11: return .Internal(
             msg: try FfiConverterString.read(from: &buf)
             )
-        case 11: return .Config(
+        case 12: return .Config(
             msg: try FfiConverterString.read(from: &buf)
             )
 
@@ -3076,53 +3134,58 @@ public struct FfiConverterTypeActrError: FfiConverterRustBuffer {
             FfiConverterString.write(msg, into: &buf)
             
         
-        case .TimedOut:
+        case let .ConnectionNotReady(info):
             writeInt(&buf, Int32(2))
+            FfiConverterTypeConnectionNotReadyInfo.write(info, into: &buf)
+            
+        
+        case .TimedOut:
+            writeInt(&buf, Int32(3))
         
         
         case let .NotFound(msg):
-            writeInt(&buf, Int32(3))
-            FfiConverterString.write(msg, into: &buf)
-            
-        
-        case let .PermissionDenied(msg):
             writeInt(&buf, Int32(4))
             FfiConverterString.write(msg, into: &buf)
             
         
-        case let .InvalidArgument(msg):
+        case let .PermissionDenied(msg):
             writeInt(&buf, Int32(5))
             FfiConverterString.write(msg, into: &buf)
             
         
-        case let .UnknownRoute(msg):
+        case let .InvalidArgument(msg):
             writeInt(&buf, Int32(6))
             FfiConverterString.write(msg, into: &buf)
             
         
-        case let .DependencyNotFound(serviceName,detail):
+        case let .UnknownRoute(msg):
             writeInt(&buf, Int32(7))
+            FfiConverterString.write(msg, into: &buf)
+            
+        
+        case let .DependencyNotFound(serviceName,detail):
+            writeInt(&buf, Int32(8))
             FfiConverterString.write(serviceName, into: &buf)
             FfiConverterString.write(detail, into: &buf)
             
         
         case let .DecodeFailure(msg):
-            writeInt(&buf, Int32(8))
-            FfiConverterString.write(msg, into: &buf)
-            
-        
-        case let .NotImplemented(msg):
             writeInt(&buf, Int32(9))
             FfiConverterString.write(msg, into: &buf)
             
         
-        case let .Internal(msg):
+        case let .NotImplemented(msg):
             writeInt(&buf, Int32(10))
             FfiConverterString.write(msg, into: &buf)
             
         
-        case let .Config(msg):
+        case let .Internal(msg):
             writeInt(&buf, Int32(11))
+            FfiConverterString.write(msg, into: &buf)
+            
+        
+        case let .Config(msg):
+            writeInt(&buf, Int32(12))
             FfiConverterString.write(msg, into: &buf)
             
         }
@@ -5786,6 +5849,30 @@ public func FfiConverterCallbackInterfaceWorkloadLifecycleBridge_lift(_ handle: 
 #endif
 public func FfiConverterCallbackInterfaceWorkloadLifecycleBridge_lower(_ v: WorkloadLifecycleBridge) -> UInt64 {
     return FfiConverterCallbackInterfaceWorkloadLifecycleBridge.lower(v)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+fileprivate struct FfiConverterOptionUInt64: FfiConverterRustBuffer {
+    typealias SwiftType = UInt64?
+
+    public static func write(_ value: SwiftType, into buf: inout [UInt8]) {
+        guard let value = value else {
+            writeInt(&buf, Int8(0))
+            return
+        }
+        writeInt(&buf, Int8(1))
+        FfiConverterUInt64.write(value, into: &buf)
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> SwiftType {
+        switch try readInt(&buf) as Int8 {
+        case 0: return nil
+        case 1: return try FfiConverterUInt64.read(from: &buf)
+        default: throw UniffiInternalError.unexpectedOptionalTag
+        }
+    }
 }
 
 #if swift(>=5.8)
