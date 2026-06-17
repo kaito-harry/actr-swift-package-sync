@@ -566,6 +566,11 @@ uint64_t uniffi_actr_fn_constructor_actrnode_new_from_linked_workload(RustBuffer
 uint64_t uniffi_actr_fn_constructor_actrnode_new_from_package_file(RustBuffer config_path, RustBuffer package_path
 );
 #endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_ACTR_FN_CONSTRUCTOR_ACTRNODE_NEW_FROM_PACKAGE_FILE_WITH_OBSERVERS
+#define UNIFFI_FFIDEF_UNIFFI_ACTR_FN_CONSTRUCTOR_ACTRNODE_NEW_FROM_PACKAGE_FILE_WITH_OBSERVERS
+uint64_t uniffi_actr_fn_constructor_actrnode_new_from_package_file_with_observers(RustBuffer config_path, RustBuffer package_path, uint64_t observers
+);
+#endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_ACTR_FN_METHOD_ACTRNODE_CREATE_NETWORK_EVENT_HANDLE
 #define UNIFFI_FFIDEF_UNIFFI_ACTR_FN_METHOD_ACTRNODE_CREATE_NETWORK_EVENT_HANDLE
 uint64_t uniffi_actr_fn_method_actrnode_create_network_event_handle(uint64_t ptr, RustCallStatus *_Nonnull out_status
@@ -664,6 +669,21 @@ void uniffi_actr_fn_free_dynamicworkload(uint64_t handle, RustCallStatus *_Nonnu
 #ifndef UNIFFI_FFIDEF_UNIFFI_ACTR_FN_CONSTRUCTOR_DYNAMICWORKLOAD_NEW
 #define UNIFFI_FFIDEF_UNIFFI_ACTR_FN_CONSTRUCTOR_DYNAMICWORKLOAD_NEW
 uint64_t uniffi_actr_fn_constructor_dynamicworkload_new(uint64_t lifecycle, RustBuffer signaling, RustBuffer websocket, RustBuffer webrtc, RustBuffer credential, RustBuffer mailbox, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_ACTR_FN_CLONE_RUNTIMEOBSERVERS
+#define UNIFFI_FFIDEF_UNIFFI_ACTR_FN_CLONE_RUNTIMEOBSERVERS
+uint64_t uniffi_actr_fn_clone_runtimeobservers(uint64_t handle, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_ACTR_FN_FREE_RUNTIMEOBSERVERS
+#define UNIFFI_FFIDEF_UNIFFI_ACTR_FN_FREE_RUNTIMEOBSERVERS
+void uniffi_actr_fn_free_runtimeobservers(uint64_t handle, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_ACTR_FN_CONSTRUCTOR_RUNTIMEOBSERVERS_NEW
+#define UNIFFI_FFIDEF_UNIFFI_ACTR_FN_CONSTRUCTOR_RUNTIMEOBSERVERS_NEW
+uint64_t uniffi_actr_fn_constructor_runtimeobservers_new(RustBuffer signaling, RustBuffer websocket, RustBuffer webrtc, RustBuffer credential, RustBuffer mailbox, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_ACTR_FN_INIT_CALLBACK_VTABLE_DATASTREAMCALLBACK
@@ -1222,9 +1242,21 @@ uint16_t uniffi_actr_checksum_constructor_actrnode_new_from_package_file(void
     
 );
 #endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_ACTR_CHECKSUM_CONSTRUCTOR_ACTRNODE_NEW_FROM_PACKAGE_FILE_WITH_OBSERVERS
+#define UNIFFI_FFIDEF_UNIFFI_ACTR_CHECKSUM_CONSTRUCTOR_ACTRNODE_NEW_FROM_PACKAGE_FILE_WITH_OBSERVERS
+uint16_t uniffi_actr_checksum_constructor_actrnode_new_from_package_file_with_observers(void
+    
+);
+#endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_ACTR_CHECKSUM_CONSTRUCTOR_DYNAMICWORKLOAD_NEW
 #define UNIFFI_FFIDEF_UNIFFI_ACTR_CHECKSUM_CONSTRUCTOR_DYNAMICWORKLOAD_NEW
 uint16_t uniffi_actr_checksum_constructor_dynamicworkload_new(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_ACTR_CHECKSUM_CONSTRUCTOR_RUNTIMEOBSERVERS_NEW
+#define UNIFFI_FFIDEF_UNIFFI_ACTR_CHECKSUM_CONSTRUCTOR_RUNTIMEOBSERVERS_NEW
+uint16_t uniffi_actr_checksum_constructor_runtimeobservers_new(void
     
 );
 #endif

@@ -715,6 +715,24 @@ public static func newFromPackageFile(configPath: String, packagePath: String)as
         )
 }
     
+    /**
+     * Create a package-backed runtime and install host-side observers.
+     */
+public static func newFromPackageFileWithObservers(configPath: String, packagePath: String, observers: RuntimeObservers)async throws  -> ActrNode  {
+    return
+        try  await uniffiRustCallAsync(
+            rustFutureFunc: {
+                uniffi_actr_fn_constructor_actrnode_new_from_package_file_with_observers(FfiConverterString.lower(configPath),FfiConverterString.lower(packagePath),FfiConverterTypeRuntimeObservers_lower(observers)
+                )
+            },
+            pollFunc: ffi_actr_rust_future_poll_u64,
+            completeFunc: ffi_actr_rust_future_complete_u64,
+            freeFunc: ffi_actr_rust_future_free_u64,
+            liftFunc: FfiConverterTypeActrNode_lift,
+            errorHandler: FfiConverterTypeActrError_lift
+        )
+}
+    
 
     
     /**
@@ -1995,6 +2013,143 @@ public func FfiConverterTypeOpusEncoder_lift(_ handle: UInt64) throws -> OpusEnc
 #endif
 public func FfiConverterTypeOpusEncoder_lower(_ value: OpusEncoder) -> UInt64 {
     return FfiConverterTypeOpusEncoder.lower(value)
+}
+
+
+
+
+
+
+/**
+ * Runtime-only observers for package-backed hosts.
+ *
+ * Unlike [`DynamicWorkload`], this object does not represent actor business
+ * logic and does not need lifecycle or dispatch callbacks. Mobile shells use
+ * it to observe transport readiness for UI state and intent retry decisions
+ * while the package guest continues to own actor dispatch.
+ */
+public protocol RuntimeObserversProtocol: AnyObject, Sendable {
+    
+}
+/**
+ * Runtime-only observers for package-backed hosts.
+ *
+ * Unlike [`DynamicWorkload`], this object does not represent actor business
+ * logic and does not need lifecycle or dispatch callbacks. Mobile shells use
+ * it to observe transport readiness for UI state and intent retry decisions
+ * while the package guest continues to own actor dispatch.
+ */
+open class RuntimeObservers: RuntimeObserversProtocol, @unchecked Sendable {
+    fileprivate let handle: UInt64
+
+    /// Used to instantiate a [FFIObject] without an actual handle, for fakes in tests, mostly.
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public struct NoHandle {
+        public init() {}
+    }
+
+    // TODO: We'd like this to be `private` but for Swifty reasons,
+    // we can't implement `FfiConverter` without making this `required` and we can't
+    // make it `required` without making it `public`.
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    required public init(unsafeFromHandle handle: UInt64) {
+        self.handle = handle
+    }
+
+    // This constructor can be used to instantiate a fake object.
+    // - Parameter noHandle: Placeholder value so we can have a constructor separate from the default empty one that may be implemented for classes extending [FFIObject].
+    //
+    // - Warning:
+    //     Any object instantiated with this constructor cannot be passed to an actual Rust-backed object. Since there isn't a backing handle the FFI lower functions will crash.
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public init(noHandle: NoHandle) {
+        self.handle = 0
+    }
+
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public func uniffiCloneHandle() -> UInt64 {
+        return try! rustCall { uniffi_actr_fn_clone_runtimeobservers(self.handle, $0) }
+    }
+    /**
+     * Construct host-side observers for a package-backed runtime.
+     */
+public convenience init(signaling: SignalingObserverBridge?, websocket: WebSocketObserverBridge?, webrtc: WebRtcObserverBridge?, credential: CredentialObserverBridge?, mailbox: MailboxObserverBridge?) {
+    let handle =
+        try! rustCall() {
+    uniffi_actr_fn_constructor_runtimeobservers_new(
+        FfiConverterOptionCallbackInterfaceSignalingObserverBridge.lower(signaling),
+        FfiConverterOptionCallbackInterfaceWebSocketObserverBridge.lower(websocket),
+        FfiConverterOptionCallbackInterfaceWebRtcObserverBridge.lower(webrtc),
+        FfiConverterOptionCallbackInterfaceCredentialObserverBridge.lower(credential),
+        FfiConverterOptionCallbackInterfaceMailboxObserverBridge.lower(mailbox),$0
+    )
+}
+    self.init(unsafeFromHandle: handle)
+}
+
+    deinit {
+        if handle == 0 {
+            // Mock objects have handle=0 don't try to free them
+            return
+        }
+
+        try! rustCall { uniffi_actr_fn_free_runtimeobservers(handle, $0) }
+    }
+
+    
+
+    
+
+    
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeRuntimeObservers: FfiConverter {
+    typealias FfiType = UInt64
+    typealias SwiftType = RuntimeObservers
+
+    public static func lift(_ handle: UInt64) throws -> RuntimeObservers {
+        return RuntimeObservers(unsafeFromHandle: handle)
+    }
+
+    public static func lower(_ value: RuntimeObservers) -> UInt64 {
+        return value.uniffiCloneHandle()
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> RuntimeObservers {
+        let handle: UInt64 = try readInt(&buf)
+        return try lift(handle)
+    }
+
+    public static func write(_ value: RuntimeObservers, into buf: inout [UInt8]) {
+        writeInt(&buf, lower(value))
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeRuntimeObservers_lift(_ handle: UInt64) throws -> RuntimeObservers {
+    return try FfiConverterTypeRuntimeObservers.lift(handle)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeRuntimeObservers_lower(_ value: RuntimeObservers) -> UInt64 {
+    return FfiConverterTypeRuntimeObservers.lower(value)
 }
 
 
@@ -6578,7 +6733,13 @@ private let initializationResult: InitializationResult = {
     if (uniffi_actr_checksum_constructor_actrnode_new_from_package_file() != 59585) {
         return InitializationResult.apiChecksumMismatch
     }
+    if (uniffi_actr_checksum_constructor_actrnode_new_from_package_file_with_observers() != 60905) {
+        return InitializationResult.apiChecksumMismatch
+    }
     if (uniffi_actr_checksum_constructor_dynamicworkload_new() != 1634) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_actr_checksum_constructor_runtimeobservers_new() != 44140) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_actr_checksum_method_datastreamcallback_on_stream() != 53144) {
