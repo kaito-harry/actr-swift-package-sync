@@ -39,6 +39,13 @@ jobs:
         run: |
           if [ "$EVENT_NAME" = "push" ]; then
             SHORT_SHA="$(echo "$COMMIT_SHA" | cut -c1-7)"
+            # Commits from a PR merge (squash or merge-commit) are already
+            # covered by the pull_request closed notification below.  Skip the
+            # push notification in that case so we don't fire twice.
+            if echo "$COMMIT_MSG" | grep -qE '\(#[0-9]+\)$|^Merge pull request #'; then
+              echo "Skipping push notification — PR merge already notified via pull_request event"
+              exit 0
+            fi
             # Fallback chain: GitHub username -> git author name -> pusher name -> "unknown"
             COMMITTER="${COMMIT_AUTHOR:-${COMMIT_AUTHOR_NAME:-${PUSHER:-unknown}}}"
             COMMIT_MSG_FIRST_LINE="$(echo "$COMMIT_MSG" | head -n 1)"
