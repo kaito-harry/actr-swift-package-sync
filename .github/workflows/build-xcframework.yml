@@ -26,7 +26,7 @@ on:
       source_repository:
         description: Full clone URL of the actr source repository.
         required: false
-        default: https://github.com/Actrium/actr
+        default: https://github.com/kaito-harry/actr
         type: string
       uniffi_version:
         description: Version of uniffi-bindgen to install.
