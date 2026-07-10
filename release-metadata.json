@@ -1,8 +1,7 @@
 {
-  "version": "0.4.13-rc.3",
-  "source_repository": "https://github.com/kaito-harry/actr",
-  "source_tag": "validation-v0.4.13-rc.3",
-  "source_sha": "a5512d5f233e2963319bbe72ba8d1058eead0176",
-  "generated_at": "2026-07-09T11:54:50.793780+00:00",
-  "prerelease": true
+  "version": "0.4.14",
+  "source_repository": "https://github.com/Actrium/actr",
+  "source_tag": "v0.4.14",
+  "source_sha": "059312cc1a88ce6e6b14c9867afc47948adb5588",
+  "generated_at": "2026-07-10T01:49:09.409178+00:00"
 }
