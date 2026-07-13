@@ -243,9 +243,9 @@ typedef void (*UniffiForeignFutureCompleteVoid)(uint64_t, UniffiForeignFutureRes
     );
 
 #endif
-#ifndef UNIFFI_FFIDEF_CALLBACK_INTERFACE_DATA_CHUNK_CALLBACK_METHOD0
-#define UNIFFI_FFIDEF_CALLBACK_INTERFACE_DATA_CHUNK_CALLBACK_METHOD0
-typedef void (*UniffiCallbackInterfaceDataChunkCallbackMethod0)(uint64_t, RustBuffer, RustBuffer, UniffiForeignFutureCompleteVoid _Nonnull, uint64_t, UniffiForeignFutureDroppedCallbackStruct* _Nonnull
+#ifndef UNIFFI_FFIDEF_CALLBACK_INTERFACE_DATA_STREAM_CALLBACK_METHOD0
+#define UNIFFI_FFIDEF_CALLBACK_INTERFACE_DATA_STREAM_CALLBACK_METHOD0
+typedef void (*UniffiCallbackInterfaceDataStreamCallbackMethod0)(uint64_t, RustBuffer, RustBuffer, UniffiForeignFutureCompleteVoid _Nonnull, uint64_t, UniffiForeignFutureDroppedCallbackStruct* _Nonnull
     );
 
 #endif
@@ -364,13 +364,13 @@ typedef void (*UniffiCallbackInterfaceWorkloadLifecycleBridgeMethod4)(uint64_t, 
     );
 
 #endif
-#ifndef UNIFFI_FFIDEF_V_TABLE_CALLBACK_INTERFACE_DATA_CHUNK_CALLBACK
-#define UNIFFI_FFIDEF_V_TABLE_CALLBACK_INTERFACE_DATA_CHUNK_CALLBACK
-typedef struct UniffiVTableCallbackInterfaceDataChunkCallback {
+#ifndef UNIFFI_FFIDEF_V_TABLE_CALLBACK_INTERFACE_DATA_STREAM_CALLBACK
+#define UNIFFI_FFIDEF_V_TABLE_CALLBACK_INTERFACE_DATA_STREAM_CALLBACK
+typedef struct UniffiVTableCallbackInterfaceDataStreamCallback {
     UniffiCallbackInterfaceFree _Nonnull uniffiFree;
     UniffiCallbackInterfaceClone _Nonnull uniffiClone;
-    UniffiCallbackInterfaceDataChunkCallbackMethod0 _Nonnull onStream;
-} UniffiVTableCallbackInterfaceDataChunkCallback;
+    UniffiCallbackInterfaceDataStreamCallbackMethod0 _Nonnull onStream;
+} UniffiVTableCallbackInterfaceDataStreamCallback;
 
 #endif
 #ifndef UNIFFI_FFIDEF_V_TABLE_CALLBACK_INTERFACE_MEDIA_TRACK_CALLBACK
@@ -476,19 +476,9 @@ uint64_t uniffi_actr_fn_method_contextbridge_add_media_track(uint64_t ptr, RustB
 uint64_t uniffi_actr_fn_method_contextbridge_call_raw(uint64_t ptr, RustBuffer target, RustBuffer route_key, RustBuffer payload_type, RustBuffer payload, int64_t timeout_ms
 );
 #endif
-#ifndef UNIFFI_FFIDEF_UNIFFI_ACTR_FN_METHOD_CONTEXTBRIDGE_CALLER_ID
-#define UNIFFI_FFIDEF_UNIFFI_ACTR_FN_METHOD_CONTEXTBRIDGE_CALLER_ID
-RustBuffer uniffi_actr_fn_method_contextbridge_caller_id(uint64_t ptr, RustCallStatus *_Nonnull out_status
-);
-#endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_ACTR_FN_METHOD_CONTEXTBRIDGE_DISCOVER
 #define UNIFFI_FFIDEF_UNIFFI_ACTR_FN_METHOD_CONTEXTBRIDGE_DISCOVER
 uint64_t uniffi_actr_fn_method_contextbridge_discover(uint64_t ptr, RustBuffer target_type
-);
-#endif
-#ifndef UNIFFI_FFIDEF_UNIFFI_ACTR_FN_METHOD_CONTEXTBRIDGE_LOG
-#define UNIFFI_FFIDEF_UNIFFI_ACTR_FN_METHOD_CONTEXTBRIDGE_LOG
-void uniffi_actr_fn_method_contextbridge_log(uint64_t ptr, RustBuffer level, RustBuffer msg, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_ACTR_FN_METHOD_CONTEXTBRIDGE_REGISTER_MEDIA_TRACK
@@ -506,19 +496,9 @@ uint64_t uniffi_actr_fn_method_contextbridge_register_stream(uint64_t ptr, RustB
 uint64_t uniffi_actr_fn_method_contextbridge_remove_media_track(uint64_t ptr, RustBuffer target, RustBuffer track_id
 );
 #endif
-#ifndef UNIFFI_FFIDEF_UNIFFI_ACTR_FN_METHOD_CONTEXTBRIDGE_REQUEST_ID
-#define UNIFFI_FFIDEF_UNIFFI_ACTR_FN_METHOD_CONTEXTBRIDGE_REQUEST_ID
-RustBuffer uniffi_actr_fn_method_contextbridge_request_id(uint64_t ptr, RustCallStatus *_Nonnull out_status
-);
-#endif
-#ifndef UNIFFI_FFIDEF_UNIFFI_ACTR_FN_METHOD_CONTEXTBRIDGE_SELF_ID
-#define UNIFFI_FFIDEF_UNIFFI_ACTR_FN_METHOD_CONTEXTBRIDGE_SELF_ID
-RustBuffer uniffi_actr_fn_method_contextbridge_self_id(uint64_t ptr, RustCallStatus *_Nonnull out_status
-);
-#endif
-#ifndef UNIFFI_FFIDEF_UNIFFI_ACTR_FN_METHOD_CONTEXTBRIDGE_SEND_DATA_CHUNK
-#define UNIFFI_FFIDEF_UNIFFI_ACTR_FN_METHOD_CONTEXTBRIDGE_SEND_DATA_CHUNK
-uint64_t uniffi_actr_fn_method_contextbridge_send_data_chunk(uint64_t ptr, RustBuffer target, RustBuffer chunk, RustBuffer payload_type
+#ifndef UNIFFI_FFIDEF_UNIFFI_ACTR_FN_METHOD_CONTEXTBRIDGE_SEND_DATA_STREAM
+#define UNIFFI_FFIDEF_UNIFFI_ACTR_FN_METHOD_CONTEXTBRIDGE_SEND_DATA_STREAM
+uint64_t uniffi_actr_fn_method_contextbridge_send_data_stream(uint64_t ptr, RustBuffer target, RustBuffer chunk, RustBuffer payload_type
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_ACTR_FN_METHOD_CONTEXTBRIDGE_SEND_MEDIA_SAMPLE
@@ -706,9 +686,9 @@ void uniffi_actr_fn_free_runtimeobservers(uint64_t handle, RustCallStatus *_Nonn
 uint64_t uniffi_actr_fn_constructor_runtimeobservers_new(RustBuffer signaling, RustBuffer websocket, RustBuffer webrtc, RustBuffer credential, RustBuffer mailbox, RustCallStatus *_Nonnull out_status
 );
 #endif
-#ifndef UNIFFI_FFIDEF_UNIFFI_ACTR_FN_INIT_CALLBACK_VTABLE_DATACHUNKCALLBACK
-#define UNIFFI_FFIDEF_UNIFFI_ACTR_FN_INIT_CALLBACK_VTABLE_DATACHUNKCALLBACK
-void uniffi_actr_fn_init_callback_vtable_datachunkcallback(const UniffiVTableCallbackInterfaceDataChunkCallback* _Nonnull vtable
+#ifndef UNIFFI_FFIDEF_UNIFFI_ACTR_FN_INIT_CALLBACK_VTABLE_DATASTREAMCALLBACK
+#define UNIFFI_FFIDEF_UNIFFI_ACTR_FN_INIT_CALLBACK_VTABLE_DATASTREAMCALLBACK
+void uniffi_actr_fn_init_callback_vtable_datastreamcallback(const UniffiVTableCallbackInterfaceDataStreamCallback* _Nonnull vtable
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_ACTR_FN_INIT_CALLBACK_VTABLE_MEDIATRACKCALLBACK
@@ -1100,21 +1080,9 @@ uint16_t uniffi_actr_checksum_method_contextbridge_call_raw(void
     
 );
 #endif
-#ifndef UNIFFI_FFIDEF_UNIFFI_ACTR_CHECKSUM_METHOD_CONTEXTBRIDGE_CALLER_ID
-#define UNIFFI_FFIDEF_UNIFFI_ACTR_CHECKSUM_METHOD_CONTEXTBRIDGE_CALLER_ID
-uint16_t uniffi_actr_checksum_method_contextbridge_caller_id(void
-    
-);
-#endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_ACTR_CHECKSUM_METHOD_CONTEXTBRIDGE_DISCOVER
 #define UNIFFI_FFIDEF_UNIFFI_ACTR_CHECKSUM_METHOD_CONTEXTBRIDGE_DISCOVER
 uint16_t uniffi_actr_checksum_method_contextbridge_discover(void
-    
-);
-#endif
-#ifndef UNIFFI_FFIDEF_UNIFFI_ACTR_CHECKSUM_METHOD_CONTEXTBRIDGE_LOG
-#define UNIFFI_FFIDEF_UNIFFI_ACTR_CHECKSUM_METHOD_CONTEXTBRIDGE_LOG
-uint16_t uniffi_actr_checksum_method_contextbridge_log(void
     
 );
 #endif
@@ -1136,21 +1104,9 @@ uint16_t uniffi_actr_checksum_method_contextbridge_remove_media_track(void
     
 );
 #endif
-#ifndef UNIFFI_FFIDEF_UNIFFI_ACTR_CHECKSUM_METHOD_CONTEXTBRIDGE_REQUEST_ID
-#define UNIFFI_FFIDEF_UNIFFI_ACTR_CHECKSUM_METHOD_CONTEXTBRIDGE_REQUEST_ID
-uint16_t uniffi_actr_checksum_method_contextbridge_request_id(void
-    
-);
-#endif
-#ifndef UNIFFI_FFIDEF_UNIFFI_ACTR_CHECKSUM_METHOD_CONTEXTBRIDGE_SELF_ID
-#define UNIFFI_FFIDEF_UNIFFI_ACTR_CHECKSUM_METHOD_CONTEXTBRIDGE_SELF_ID
-uint16_t uniffi_actr_checksum_method_contextbridge_self_id(void
-    
-);
-#endif
-#ifndef UNIFFI_FFIDEF_UNIFFI_ACTR_CHECKSUM_METHOD_CONTEXTBRIDGE_SEND_DATA_CHUNK
-#define UNIFFI_FFIDEF_UNIFFI_ACTR_CHECKSUM_METHOD_CONTEXTBRIDGE_SEND_DATA_CHUNK
-uint16_t uniffi_actr_checksum_method_contextbridge_send_data_chunk(void
+#ifndef UNIFFI_FFIDEF_UNIFFI_ACTR_CHECKSUM_METHOD_CONTEXTBRIDGE_SEND_DATA_STREAM
+#define UNIFFI_FFIDEF_UNIFFI_ACTR_CHECKSUM_METHOD_CONTEXTBRIDGE_SEND_DATA_STREAM
+uint16_t uniffi_actr_checksum_method_contextbridge_send_data_stream(void
     
 );
 #endif
@@ -1304,9 +1260,9 @@ uint16_t uniffi_actr_checksum_constructor_runtimeobservers_new(void
     
 );
 #endif
-#ifndef UNIFFI_FFIDEF_UNIFFI_ACTR_CHECKSUM_METHOD_DATACHUNKCALLBACK_ON_STREAM
-#define UNIFFI_FFIDEF_UNIFFI_ACTR_CHECKSUM_METHOD_DATACHUNKCALLBACK_ON_STREAM
-uint16_t uniffi_actr_checksum_method_datachunkcallback_on_stream(void
+#ifndef UNIFFI_FFIDEF_UNIFFI_ACTR_CHECKSUM_METHOD_DATASTREAMCALLBACK_ON_STREAM
+#define UNIFFI_FFIDEF_UNIFFI_ACTR_CHECKSUM_METHOD_DATASTREAMCALLBACK_ON_STREAM
+uint16_t uniffi_actr_checksum_method_datastreamcallback_on_stream(void
     
 );
 #endif

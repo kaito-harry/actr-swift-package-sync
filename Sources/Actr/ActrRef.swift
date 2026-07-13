@@ -11,17 +11,17 @@ import SwiftProtobuf
 
 /// Returns the fault-domain classification for an ACTR error.
 public func actrErrorKind(_ error: ActrError) -> ErrorKind {
-    ErrorKind(bridge: ActrBindings.actrErrorKind(err: error.bridge))
+    ActrBindings.actrErrorKind(err: error)
 }
 
 /// Returns true when an ACTR error is transient and can be retried.
 public func actrErrorIsRetryable(_ error: ActrError) -> Bool {
-    ActrBindings.actrErrorIsRetryable(err: error.bridge)
+    ActrBindings.actrErrorIsRetryable(err: error)
 }
 
 /// Returns true when an ACTR error indicates corrupt payload handling.
 public func actrErrorRequiresDlq(_ error: ActrError) -> Bool {
-    ActrBindings.actrErrorRequiresDlq(err: error.bridge)
+    ActrBindings.actrErrorRequiresDlq(err: error)
 }
 
 /// A high-level reference to a running actor.
@@ -29,37 +29,35 @@ public func actrErrorRequiresDlq(_ error: ActrError) -> Bool {
 /// This class wraps the low-level `ActrRefWrapper` and provides a cleaner API
 /// for interacting with actors in the ACTR system.
 public final class ActrRef: Sendable {
-    private let inner: ActrBindings.ActrRefWrapper
+    private let inner: ActrRefWrapper
     private let retainedWorkload: DynamicWorkload?
     private let retainedObservers: RuntimeObservers?
 
     /// Get the actor's ID
     public func actorId() -> ActrId {
-        ActrId(bridge: inner.actorId())
+        inner.actorId()
     }
 
     /// Performs a type-safe RPC call using an RpcRequest message.
     ///
     /// - Parameters:
     ///   - message: The request message conforming to `RpcRequest`
+    ///   - payloadType: Payload transmission type (default: .rpcReliable)
     ///   - timeoutMs: Timeout in milliseconds (default: 30000)
     /// - Returns: The response message
     public func call<Req: RpcRequest>(
         _ message: Req,
+        payloadType: PayloadType = .rpcReliable,
         timeoutMs: Int64 = 30000
-    ) async throws(ActrError) -> Req.Response {
-        do {
-            let requestData = try encodeProtobufMessage(message, context: "\(Req.self) request")
-            let responseData = try await inner.call(
-                routeKey: Req.routeKey,
-                payloadType: Req.payloadType.bridge,
-                requestPayload: requestData,
-                timeoutMs: timeoutMs
-            )
-            return try decodeProtobufMessage(Req.Response.self, from: responseData, context: "\(Req.Response.self) response")
-        } catch {
-            throw ActrError(error: error)
-        }
+    ) async throws -> Req.Response {
+        let requestData = try message.serializedData()
+        let responseData = try await inner.call(
+            routeKey: Req.routeKey,
+            payloadType: payloadType,
+            requestPayload: requestData,
+            timeoutMs: timeoutMs
+        )
+        return try Req.Response(serializedBytes: responseData)
     }
 
     /// Performs a raw local RPC call.
@@ -69,16 +67,12 @@ public final class ActrRef: Sendable {
         requestPayload: Data,
         timeoutMs: Int64 = 30000
     ) async throws -> Data {
-        do {
-            return try await inner.call(
-                routeKey: routeKey,
-                payloadType: payloadType.bridge,
-                requestPayload: requestPayload,
-                timeoutMs: timeoutMs
-            )
-        } catch {
-            throw ActrError(error: error)
-        }
+        try await inner.call(
+            routeKey: routeKey,
+            payloadType: payloadType,
+            requestPayload: requestPayload,
+            timeoutMs: timeoutMs
+        )
     }
 
     /// Discover actors of the specified type
@@ -88,11 +82,7 @@ public final class ActrRef: Sendable {
     ///   - count: Maximum number of actors to discover
     /// - Returns: Array of discovered actor IDs
     public func discover(targetType: ActrType, count: UInt32) async throws -> [ActrId] {
-        do {
-            return try await inner.discover(targetType: targetType.bridge, count: count).map(ActrId.init(bridge:))
-        } catch {
-            throw ActrError(error: error)
-        }
+        try await inner.discover(targetType: targetType, count: count)
     }
 
     /// Shuts down the actor and waits for it to terminate.
@@ -122,15 +112,11 @@ public final class ActrRef: Sendable {
         payloadType: PayloadType,
         messagePayload: Data
     ) async throws {
-        do {
-            try await inner.tell(
-                routeKey: routeKey,
-                payloadType: payloadType.bridge,
-                messagePayload: messagePayload
-            )
-        } catch {
-            throw ActrError(error: error)
-        }
+        try await inner.tell(
+            routeKey: routeKey,
+            payloadType: payloadType,
+            messagePayload: messagePayload
+        )
     }
 
     /// Wait for shutdown to complete
@@ -139,7 +125,7 @@ public final class ActrRef: Sendable {
     }
 
     init(
-        inner: ActrBindings.ActrRefWrapper,
+        inner: ActrRefWrapper,
         retainedWorkload: DynamicWorkload? = nil,
         retainedObservers: RuntimeObservers? = nil
     ) {
