@@ -1,8 +1,8 @@
 {
-  "version": "0.4.11-rc.7",
+  "version": "0.4.11-rc.8",
   "source_repository": "https://github.com/kaito-harry/actr",
-  "source_tag": "validation-v0.4.11-rc.7",
-  "source_sha": "734ea3cd6dabcc3359d36230ed0c44697400bfbd",
-  "generated_at": "2026-07-13T15:26:02.479033+00:00",
+  "source_tag": "validation-v0.4.11-rc.8",
+  "source_sha": "ea311357202071c1b989cac9597d304cfabcd3e2",
+  "generated_at": "2026-07-14T03:48:22.642927+00:00",
   "prerelease": true
 }
